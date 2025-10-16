@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarbonZero AI - Carbon Management Platform</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind for custom colors and animations -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'co2-dark': '#111827',
+                        'co2-green': '#10b981',
+                        'co2-light-green': '#34d399',
+                        'co2-accent-dark': '#1f2937',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.7s ease-out',
+                    }
+                },
+            }
+        }
+    </script>
+    <style>
+        /* Custom scroll behavior for smooth navigation */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Dark mode aesthetics for the primary background and text */
+        body {
+            background-color: #111827;
+            color: #d1d5db;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-co2-dark/95 backdrop-blur-md shadow-lg border-b border-co2-accent-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="#" class="text-3xl font-extrabold text-co2-green hover:text-co2-light-green transition-colors">
+                    CarbonZero AI
+                </a>
+                
+                <!-- Desktop Links -->
+                <div class="hidden lg:flex space-x-8">
+                    <a href="#platform" class="text-gray-300 hover:text-co2-green font-medium transition duration-300">Platform</a>
+                    <a href="#solutions" class="text-gray-300 hover:text-co2-green font-medium transition duration-300">Solutions</a>
+                    <a href="#impact" class="text-gray-300 hover:text-co2-green font-medium transition duration-300">Our Impact</a>
+                    <a href="#contact" class="text-gray-300 hover:text-co2-green font-medium transition duration-300">Contact</a>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <button class="px-4 py-2 border border-co2-green text-co2-green rounded-lg hover:bg-co2-green/10 transition-all font-semibold shadow-md">
+                        Log In
+                    </button>
+                    <button class="px-4 py-2 bg-co2-green text-co2-dark rounded-lg hover:bg-co2-light-green transition-all font-semibold shadow-lg">
+                        Start Free Trial
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button (Hamburger Icon) -->
+                <button id="mobile-menu-button" class="lg:hidden p-2 rounded-md text-gray-300 hover:text-co2-green hover:bg-co2-accent-dark transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="lg:hidden hidden border-t border-co2-accent-dark py-2">
+            <a href="#platform" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-co2-green hover:bg-co2-accent-dark/50 transition-colors rounded-md">Platform</a>
+            <a href="#solutions" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-co2-green hover:bg-co2-accent-dark/50 transition-colors rounded-md">Solutions</a>
+            <a href="#impact" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-co2-green hover:bg-co2-accent-dark/50 transition-colors rounded-md">Our Impact</a>
+            <a href="#contact" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-co2-green hover:bg-co2-accent-dark/50 transition-colors rounded-md">Contact</a>
+            <div class="pt-4 pb-2 space-y-3 px-3">
+                <button class="w-full px-4 py-2 border border-co2-green text-co2-green rounded-lg hover:bg-co2-green/10 transition-all font-semibold shadow-md">
+                    Log In
+                </button>
+                <button class="w-full px-4 py-2 bg-co2-green text-co2-dark rounded-lg hover:bg-co2-light-green transition-all font-semibold shadow-lg">
+                    Start Free Trial
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="py-24 md:py-32 bg-co2-dark bg-opacity-95 overflow-hidden relative">
+        <div class="absolute inset-0 bg-gradient-to-br from-co2-dark via-co2-dark to-co2-green/30 opacity-70"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="lg:w-3/4 xl:w-2/3">
+                <span class="inline-block bg-co2-green/20 text-co2-light-green text-sm font-semibold px-4 py-2 rounded-full mb-6 animate-fade-in-up">
+                    ✨ Introducing AI-Powered Net Zero
+                </span>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-tight mb-8 animate-fade-in-up">
+                    ACCELERATE YOUR JOURNEY TO NET-ZERO
+                </h1>
+                <p class="text-xl text-gray-300 mb-10 max-w-2xl animate-fade-in-up" style="animation-delay: 0.2s;">
+                    CarbonZero AI delivers real-time carbon accounting, predictive analytics, and automated reduction strategies to achieve your sustainability goals faster and more efficiently.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-6 animate-fade-in-up" style="animation-delay: 0.4s;">
+                    <a href="#contact" class="inline-flex items-center justify-center px-8 py-4 bg-co2-green text-co2-dark font-bold text-lg rounded-xl shadow-2xl hover:bg-co2-light-green transform hover:scale-105 transition duration-300">
+                        Get Started Today
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+                    <a href="#platform" class="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-500 text-white font-semibold text-lg rounded-xl shadow-lg hover:border-co2-green transition duration-300">
+                        Explore the Platform
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact/Stats Section -->
+    <section id="impact" class="py-16 bg-co2-accent-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-white mb-12">Trusted by Global Sustainability Leaders</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="p-4 rounded-xl hover:bg-co2-dark transition duration-300">
+                    <div class="text-5xl font-extrabold text-co2-green mb-2">350K+</div>
+                    <div class="text-gray-400 font-medium">Tons of CO2 Reduced</div>
+                </div>
+                <div class="p-4 rounded-xl hover:bg-co2-dark transition duration-300">
+                    <div class="text-5xl font-extrabold text-co2-green mb-2">99.8%</div>
+                    <div class="text-gray-400 font-medium">Data Accuracy Rate</div>
+                </div>
+                <div class="p-4 rounded-xl hover:bg-co2-dark transition duration-300">
+                    <div class="text-5xl font-extrabold text-co2-green mb-2">50+</div>
+                    <div class="text-gray-400 font-medium">Enterprise Clients</div>
+                </div>
+                <div class="p-4 rounded-xl hover:bg-co2-dark transition duration-300">
+                    <div class="text-5xl font-extrabold text-co2-green mb-2">12x</div>
+                    <div class="text-gray-400 font-medium">ROI on Reduction Projects</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Features Section -->
+    <section id="platform" class="py-24 bg-co2-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-base font-semibold text-co2-green uppercase tracking-wider">PLATFORM CAPABILITIES</h2>
+                <p class="mt-2 text-4xl font-extrabold text-white sm:text-5xl">Intelligent Tools to Drive Real Change</p>
+                <p class="mt-4 text-xl text-gray-400 max-w-3xl mx-auto">
+                    Everything you need to move beyond reporting to actual, measurable emission reduction.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature Card 1: AI Analytics -->
+                <div class="bg-co2-accent-dark p-8 rounded-2xl shadow-xl border border-co2-green/20 hover:shadow-co2-green/20 hover:scale-[1.02] transition duration-500">
+                    <div class="p-4 bg-co2-green/20 rounded-xl w-16 h-16 flex items-center justify-center mb-4">
+                        <svg class="h-8 w-8 text-co2-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M12 18v4"/><path d="M4.93 4.93l3.54 3.54"/><path d="M15.53 15.53l3.54 3.54"/><path d="M2 12h6"/><path d="M18 12h4"/><path d="M4.93 19.07l3.54-3.54"/><path d="M15.53 8.47l3.54-3.54"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">Predictive AI Analytics</h3>
+                    <p class="text-gray-400 mb-4">
+                        Forecasting future emissions based on operational data, allowing you to proactively intervene and optimize processes.
+                    </p>
+                    <ul class="text-sm space-y-2 text-co2-light-green">
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> Scenario Modeling</li>
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> Deep Learning Optimization</li>
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> Emission Anomaly Detection</li>
+                    </ul>
+                </div>
+
+                <!-- Feature Card 2: Real-time Data -->
+                <div class="bg-co2-accent-dark p-8 rounded-2xl shadow-xl border border-co2-green/20 hover:shadow-co2-green/20 hover:scale-[1.02] transition duration-500">
+                    <div class="p-4 bg-co2-green/20 rounded-xl w-16 h-16 flex items-center justify-center mb-4">
+                        <svg class="h-8 w-8 text-co2-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.82l-2.91 2.91"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.82l2.91-2.91"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">Real-time Data Integration</h3>
+                    <p class="text-gray-400 mb-4">
+                        Seamlessly connect with ERP, IoT sensors, fleet telematics, and utility providers for zero-effort data collection.
+                    </p>
+                    <ul class="text-sm space-y-2 text-co2-light-green">
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> 150+ Direct Connectors</li>
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> Automated Scope 1, 2, & 3</li>
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> API-First Architecture</li>
+                    </ul>
+                </div>
+
+                <!-- Feature Card 3: Compliance & Reporting -->
+                <div class="bg-co2-accent-dark p-8 rounded-2xl shadow-xl border border-co2-green/20 hover:shadow-co2-green/20 hover:scale-[1.02] transition duration-500">
+                    <div class="p-4 bg-co2-green/20 rounded-xl w-16 h-16 flex items-center justify-center mb-4">
+                        <svg class="h-8 w-8 text-co2-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">Automated Compliance</h3>
+                    <p class="text-gray-400 mb-4">
+                        Generate audit-ready reports tailored for all major global standards and regulatory frameworks instantly.
+                    </p>
+                    <ul class="text-sm space-y-2 text-co2-light-green">
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> GHG Protocol Alignment</li>
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> CDP, TCFD, SEC Ready</li>
+                        <li class="flex items-center"><span class="mr-2">&bull;</span> Custom Regulatory Views</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-24 bg-co2-accent-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-base font-semibold text-co2-green uppercase tracking-wider">OUR PROCESS</h2>
+                <p class="mt-2 text-4xl font-extrabold text-white sm:text-5xl">The Three Steps to Carbon Reduction</p>
+            </div>
+
+            <div class="relative grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-8">
+                <!-- Vertical Line Connector (Desktop Only) -->
+                <div class="hidden lg:block absolute left-0 right-0 top-1/4 h-1 bg-co2-green/30 transform translate-y-1/2 mx-auto max-w-5xl"></div>
+
+                <!-- Step 1 -->
+                <div class="relative flex flex-col items-center text-center p-6 bg-co2-dark rounded-xl shadow-2xl z-10 hover:bg-co2-dark/80 transition duration-300">
+                    <div class="w-16 h-16 bg-co2-green text-white rounded-full flex items-center justify-center font-bold text-2xl mb-6 shadow-co2-green/50 shadow-lg">1</div>
+                    <h3 class="text-3xl font-bold text-white mb-3">Connect & Account</h3>
+                    <p class="text-gray-400">
+                        Integrate all your data sources automatically. Our platform calculates your entire Scope 1, 2, and 3 footprint with 99.8% accuracy.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative flex flex-col items-center text-center p-6 bg-co2-dark rounded-xl shadow-2xl z-10 hover:bg-co2-dark/80 transition duration-300">
+                    <div class="w-16 h-16 bg-co2-green text-white rounded-full flex items-center justify-center font-bold text-2xl mb-6 shadow-co2-green/50 shadow-lg">2</div>
+                    <h3 class="text-3xl font-bold text-white mb-3">Analyze & Plan</h3>
+                    <p class="text-gray-400">
+                        AI identifies cost-effective reduction levers, predicts future impact, and generates a phased net-zero transition roadmap.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative flex flex-col items-center text-center p-6 bg-co2-dark rounded-xl shadow-2xl z-10 hover:bg-co2-dark/80 transition duration-300">
+                    <div class="w-16 h-16 bg-co2-green text-white rounded-full flex items-center justify-center font-bold text-2xl mb-6 shadow-co2-green/50 shadow-lg">3</div>
+                    <h3 class="text-3xl font-bold text-white mb-3">Act & Certify</h3>
+                    <p class="text-gray-400">
+                        Implement the strategy, track real-time progress, and automatically prepare for ESG disclosure and external certification audits.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section id="solutions" class="py-24 bg-co2-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-base font-semibold text-co2-green uppercase tracking-wider">TAILORED SOLUTIONS</h2>
+                <p class="mt-2 text-4xl font-extrabold text-white sm:text-5xl">Solutions for Every Business Scale</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <!-- Card 1: Enterprise -->
+                <div class="bg-co2-accent-dark p-8 rounded-2xl shadow-2xl hover:border-co2-green transition duration-300 border-t-8 border-co2-green/50">
+                    <h3 class="text-3xl font-extrabold text-white mb-2">Enterprise Suite</h3>
+                    <p class="text-co2-green text-lg font-semibold mb-6">For global organizations.</p>
+                    <p class="text-gray-400 mb-8">
+                        Complete, custom carbon accounting for multi-national corporations with complex supply chains and demanding regulatory requirements.
+                    </p>
+                    <ul class="space-y-3 text-gray-300 mb-10">
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Dedicated CSM & Implementation</li>
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Advanced Scenario Modeling</li>
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>24/7 Priority Support</li>
+                    </ul>
+                    <button class="w-full px-6 py-3 bg-co2-green text-co2-dark font-bold rounded-xl hover:bg-co2-light-green transition duration-300 shadow-lg">Request Custom Demo</button>
+                </div>
+
+                <!-- Card 2: Mid-Market (Featured) -->
+                <div class="bg-co2-dark p-8 rounded-2xl shadow-2xl ring-4 ring-co2-green/80 transform scale-[1.05] hover:scale-[1.07] transition duration-500 relative">
+                    <span class="absolute -top-4 left-1/2 -translate-x-1/2 bg-co2-green text-co2-dark font-bold text-xs px-3 py-1 rounded-full shadow-md">MOST POPULAR</span>
+                    <h3 class="text-3xl font-extrabold text-white mb-2">Growth Partner</h3>
+                    <p class="text-co2-green text-lg font-semibold mb-6">For scale-ups and manufacturers.</p>
+                    <p class="text-gray-400 mb-8">
+                        The ideal combination of AI tools and data integration to meet rapidly increasing shareholder and regulatory scrutiny.
+                    </p>
+                    <ul class="space-y-3 text-gray-300 mb-10">
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Full AI Prediction Suite</li>
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Dedicated Implementation Specialist</li>
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Up to 5 Data Integrations</li>
+                    </ul>
+                    <button class="w-full px-6 py-3 bg-co2-green text-co2-dark font-bold rounded-xl hover:bg-co2-light-green transition duration-300 shadow-lg">Start 14-Day Free Trial</button>
+                </div>
+
+                <!-- Card 3: Small Business -->
+                <div class="bg-co2-accent-dark p-8 rounded-2xl shadow-2xl hover:border-co2-green transition duration-300 border-t-8 border-co2-green/50">
+                    <h3 class="text-3xl font-extrabold text-white mb-2">Small Business</h3>
+                    <p class="text-co2-green text-lg font-semibold mb-6">For compliance and first steps.</p>
+                    <p class="text-gray-400 mb-8">
+                        Simple, intuitive tools to measure your basic carbon footprint and generate your first sustainability report.
+                    </p>
+                    <ul class="space-y-3 text-gray-300 mb-10">
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Basic Carbon Accounting (Manual)</li>
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Standard Reporting Templates</li>
+                        <li class="flex items-center"><svg class="h-5 w-5 mr-3 text-co2-light-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>Email Support</li>
+                    </ul>
+                    <button class="w-full px-6 py-3 border border-co2-green text-co2-green font-bold rounded-xl hover:bg-co2-green/10 transition duration-300 shadow-md">Get Started Free</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action (CTA) Section -->
+    <section id="contact" class="py-24 bg-co2-green/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-co2-accent-dark p-10 md:p-16 rounded-3xl shadow-2xl border border-co2-green/50 text-center">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6">
+                    Ready to Achieve Net-Zero?
+                </h2>
+                <p class="text-xl text-gray-300 mb-10 max-w-4xl mx-auto">
+                    Schedule a personalized demo with our sustainability experts and discover the fastest path to meaningful carbon reduction.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#" class="inline-flex items-center justify-center px-8 py-4 bg-co2-green text-co2-dark font-bold text-lg rounded-xl shadow-2xl hover:bg-co2-light-green transform hover:scale-105 transition duration-300">
+                        Book a Free Demo
+                    </a>
+                    <a href="#" class="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-500 text-white font-semibold text-lg rounded-xl shadow-lg hover:border-co2-green transition duration-300">
+                        View Pricing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-co2-dark py-16 border-t border-co2-accent-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 border-b border-gray-700 pb-10 mb-8">
+                <!-- Logo & Social -->
+                <div>
+                    <a href="#" class="text-3xl font-extrabold text-co2-green">CarbonZero AI</a>
+                    <p class="text-gray-400 text-sm mt-4">
+                        Intelligent sustainability management.
+                    </p>
+                    <div class="flex space-x-4 mt-6">
+                        <!-- Placeholder for social icons -->
+                        <div class="h-8 w-8 bg-co2-accent-dark rounded-full hover:bg-co2-green/20 transition cursor-pointer"></div>
+                        <div class="h-8 w-8 bg-co2-accent-dark rounded-full hover:bg-co2-green/20 transition cursor-pointer"></div>
+                        <div class="h-8 w-8 bg-co2-accent-dark rounded-full hover:bg-co2-green/20 transition cursor-pointer"></div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#platform" class="hover:text-co2-green">Platform Overview</a></li>
+                        <li><a href="#how-it-works" class="hover:text-co2-green">How It Works</a></li>
+                        <li><a href="#impact" class="hover:text-co2-green">Client Impact</a></li>
+                        <li><a href="#solutions" class="hover:text-co2-green">Pricing</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Resources</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#" class="hover:text-co2-green">Documentation</a></li>
+                        <li><a href="#" class="hover:text-co2-green">GHG Protocol Guide</a></li>
+                        <li><a href="#" class="hover:text-co2-green">API Status</a></li>
+                        <li><a href="#" class="hover:text-co2-green">Blog & News</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Solutions -->
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-semibold text-white mb-4">Solutions</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#solutions" class="hover:text-co2-green">Enterprise Carbon</a></li>
+                        <li><a href="#solutions" class="hover:text-co2-green">Mid-Market</a></li>
+                        <li><a href="#solutions" class="hover:text-co2-green">SME Reporting</a></li>
+                        <li><a href="#solutions" class="hover:text-co2-green">Carbon Offsets</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info (Empty column used as spacer for small screens) -->
+                <div class="hidden md:block"></div>
+            </div>
+
+            <!-- Copyright & Legal -->
+            <div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <span>&copy; 2025 CarbonZero AI. All rights reserved.</span>
+                <div class="flex space-x-6 mt-3 md:mt-0">
+                    <a href="#" class="hover:text-co2-green">Privacy Policy</a>
+                    <a href="#" class="hover:text-co2-green">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Mobile Menu Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const button = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+            const links = menu.querySelectorAll('a');
+
+            if (button && menu) {
+                // Toggle visibility on button click
+                button.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+
+                // Hide menu when a link is clicked (for smooth scroll)
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        menu.classList.add('hidden');
+                    });
+                });
+            } else {
+                console.error("Mobile menu elements not found.");
+            }
+        });
+    </script>
+</body>
+</html>
