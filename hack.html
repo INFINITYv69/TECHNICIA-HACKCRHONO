@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon-Vision RPi Simulator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .card {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem; /* sm text */
+        }
+        
+        /* --- Custom CSS for Plume Simulation --- */
+        #vent-area {
+            position: relative;
+            height: 200px; 
+            background-color: #e2e8f0; /* Light Slate */
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #smokestack {
+            width: 60px;
+            height: 100%;
+            background-color: #1f2937; /* Dark Gray */
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 8px 8px 0 0;
+            z-index: 10;
+        }
+
+        #plume {
+            position: absolute;
+            bottom: 10px; /* Start just above the ground */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease-out;
+            filter: blur(8px);
+            z-index: 5;
+        }
+        
+        .plume-level-1 { /* Low Plume Detected (Yellow) */
+            width: 100px;
+            height: 120px;
+            background-color: rgba(253, 224, 71, 0.6);
+            opacity: 0.8;
+        }
+
+        .plume-level-2 { /* HIGH EMISSION WARNING (Red) */
+            width: 150px;
+            height: 180px;
+            background-color: rgba(239, 68, 68, 0.8);
+            opacity: 0.9;
+            animation: pulse-plume 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-plume {
+            from { transform: scale(1) translateX(-50%); }
+            to { transform: scale(1.05) translateX(-50%); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+
+    <!-- Canvas Environment Boilerplate (Mandatory for the platform) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db = null;
+        let auth = null;
+
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                if (initialAuthToken) {
+                    signInWithCustomToken(auth, initialAuthToken).catch(e => console.error("Firebase custom token sign-in failed:", e));
+                } else {
+                    signInAnonymously(auth).catch(e => console.error("Firebase anonymous sign-in failed:", e));
+                }
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+            }
+        } else {
+            console.warn("Firebase config not found. Running simulation without persistence.");
+        }
+    </script>
+
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">Carbon-Vision AI IoT Simulator</h1>
+            <p class="text-lg text-gray-500">Simulating Raspberry Pi 3B+ Sensor Data Stream to Azure</p>
+        </header>
+
+        <!-- Main Dashboard Grid (Sensor and Control Status) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- MQ2 Gas Sensor Card -->
+            <div id="mq2-card" class="card p-6 rounded-xl transition duration-300">
+                <h2 class="text-xl font-semibold mb-2 text-gray-700">MQ2 Gas Sensor (PPM)</h2>
+                <p id="mq2-value" class="text-5xl font-extrabold text-indigo-600">--</p>
+                <div class="mt-4">
+                    <span id="mq2-level-badge" class="status-badge bg-green-200 text-green-800">Normal</span>
+                </div>
+            </div>
+
+            <!-- Camera AI Status Card -->
+            <div id="camera-card" class="card p-6 rounded-xl transition duration-300">
+                <h2 class="text-xl font-semibold mb-2 text-gray-700">Camera AI Emission Status</h2>
+                <p id="camera-ai-result" class="text-2xl font-bold text-gray-500">Initializing...</p>
+                <div class="mt-4">
+                    <span id="camera-ai-badge" class="status-badge bg-gray-200 text-gray-800">No Image Feed</span>
+                </div>
+            </div>
+
+            <!-- RPi System Status Card -->
+            <div class="card p-6 rounded-xl">
+                <h2 class="text-xl font-semibold mb-2 text-gray-700">Control System State</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium text-gray-600">Relay (Shutdown)</span>
+                        <span id="relay-status" class="status-badge bg-gray-300 text-gray-800">OFF</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium text-gray-600">Buzzer (Alarm)</span>
+                        <span id="buzzer-status" class="status-badge bg-gray-300 text-gray-800">SILENT</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium text-gray-600">Ultrasonic (cm)</span>
+                        <span id="ultrasonic-value" class="status-badge bg-blue-200 text-blue-800">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- NEW: Visual Simulation Area (The "Web Simulator" Look) -->
+        <div class="card p-6 rounded-xl mb-8">
+            <h2 class="text-xl font-semibold mb-2 text-gray-700">Simulated Camera Feed: Emission Plume Visual</h2>
+            <div id="vent-area">
+                <div id="plume"></div>
+                <div id="smokestack"></div>
+                <!-- Simple ground representation -->
+                <div class="absolute bottom-0 w-full h-10 bg-gray-400"></div>
+            </div>
+            <p class="text-sm text-center mt-2 text-gray-500">Camera AI tracks the size and color of the simulated plume.</p>
+        </div>
+
+        <!-- Simulated Heatmap & Log Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Simulated Heatmap -->
+            <div class="lg:col-span-2 card p-6 rounded-xl">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Simulated Emission Heatmap Zones</h2>
+                <div id="heatmap-grid" class="grid grid-cols-3 gap-3">
+                    <!-- Zone cards will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Azure/Log Status -->
+            <div class="lg:col-span-1 card p-6 rounded-xl overflow-y-auto max-h-80">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Azure Data Sync Log</h2>
+                <div id="log-output" class="text-sm space-y-1">
+                    <p class="text-gray-500">Simulator initialized. Data streaming will begin shortly...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const mq2ValueEl = document.getElementById('mq2-value');
+        const mq2LevelBadgeEl = document.getElementById('mq2-level-badge');
+        const cameraAiResultEl = document.getElementById('camera-ai-result');
+        const cameraAiBadgeEl = document.getElementById('camera-ai-badge');
+        const relayStatusEl = document.getElementById('relay-status');
+        const buzzerStatusEl = document.getElementById('buzzer-status');
+        const ultrasonicValueEl = document.getElementById('ultrasonic-value');
+        const heatmapGridEl = document.getElementById('heatmap-grid');
+        const logOutputEl = document.getElementById('log-output');
+        const plumeEl = document.getElementById('plume'); // NEW Plume Element
+
+        // Global State
+        let currentMQ2 = 300;
+        let emissionTrend = 1; // 1 = increasing, -1 = decreasing
+
+        // --- Core Simulation Logic ---
+
+        function generateSensorData() {
+            // 1. Simulate MQ2 Gas Sensor (PPM)
+            // Gently randomize value while following a trend
+            currentMQ2 += (Math.random() * 20 - 10) * emissionTrend;
+            currentMQ2 = Math.max(100, Math.min(850, currentMQ2)); // Keep within realistic range
+            if (currentMQ2 > 750) emissionTrend = -1;
+            if (currentMQ2 < 200) emissionTrend = 1;
+            
+            const mq2PPM = Math.round(currentMQ2);
+
+            // 2. Simulate Camera AI Detection
+            let aiResult, aiBadgeClass;
+            let emissionLevel; // 0: Low, 1: Medium, 2: High
+
+            if (mq2PPM < 400) {
+                aiResult = 'No Visible Plume';
+                aiBadgeClass = 'bg-green-200 text-green-800';
+                emissionLevel = 0;
+            } else if (mq2PPM >= 400 && mq2PPM < 650) {
+                aiResult = 'Low Plume Detected';
+                aiBadgeClass = 'bg-yellow-200 text-yellow-800';
+                emissionLevel = 1;
+            } else {
+                aiResult = 'HIGH EMISSION WARNING';
+                aiBadgeClass = 'bg-red-200 text-red-800';
+                emissionLevel = 2;
+            }
+
+            // 3. Simulate Ultrasonic Sensor (Distance to object/pipe in cm)
+            const ultrasonicCM = (Math.random() * 5 + 18).toFixed(1); // 18.0 to 23.0 cm
+
+            // 4. Simulate Relay/Buzzer based on Emission
+            const buzzerOn = emissionLevel > 0;
+            const relayOff = emissionLevel === 2; // Trigger shutdown only on max alert
+
+            const buzzerStatus = buzzerOn ? 'ON (ALARM)' : 'SILENT';
+            const relayStatus = relayOff ? 'TRIPPED (OFF)' : 'ON';
+
+            return {
+                timestamp: new Date().toISOString(),
+                mq2PPM,
+                aiResult,
+                ultrasonicCM,
+                buzzerStatus,
+                relayStatus,
+                emissionLevel
+            };
+        }
+
+        // --- UI Update and Rendering ---
+
+        function updateDashboard(data) {
+            const { mq2PPM, aiResult, ultrasonicCM, buzzerStatus, relayStatus, emissionLevel } = data;
+            
+            // 1. MQ2 Update
+            mq2ValueEl.textContent = mq2PPM;
+            let mq2LevelText = 'Normal';
+            let mq2CardClass = 'bg-green-100';
+            if (mq2PPM > 650) {
+                mq2LevelText = 'CRITICAL';
+                mq2CardClass = 'bg-red-100';
+            } else if (mq2PPM > 400) {
+                mq2LevelText = 'ELEVATED';
+                mq2CardClass = 'bg-yellow-100';
+            }
+            mq2LevelBadgeEl.textContent = mq2LevelText;
+            mq2LevelBadgeEl.className = `status-badge ${mq2CardClass.replace('100', '200')} ${mq2CardClass.replace('100', '800').replace('bg-', 'text-')}`;
+            
+            // 2. Camera AI Update
+            cameraAiResultEl.textContent = aiResult;
+            let aiBadgeClass = '';
+            if (emissionLevel === 0) aiBadgeClass = 'bg-green-200 text-green-800';
+            if (emissionLevel === 1) aiBadgeClass = 'bg-yellow-200 text-yellow-800';
+            if (emissionLevel === 2) aiBadgeClass = 'bg-red-200 text-red-800 font-bold animate-pulse';
+            cameraAiBadgeEl.className = `status-badge ${aiBadgeClass}`;
+
+            // 2b. Visual Plume Update (NEW)
+            plumeEl.className = ''; // Reset classes
+            plumeEl.style.opacity = '0'; // Default hide/fade
+
+            if (emissionLevel === 1) {
+                plumeEl.classList.add('plume-level-1');
+            } else if (emissionLevel === 2) {
+                plumeEl.classList.add('plume-level-2');
+            } 
+
+
+            // 3. System Status Update (Enhanced Visual Feedback)
+            relayStatusEl.textContent = relayStatus;
+            relayStatusEl.classList.remove('bg-red-300', 'bg-green-300', 'bg-gray-300', 'text-white', 'text-gray-800');
+            if (relayStatus === 'TRIPPED (OFF)') {
+                // Stronger red for critical shutdown
+                relayStatusEl.classList.add('bg-red-600', 'text-white', 'font-bold');
+            } else {
+                relayStatusEl.classList.add('bg-green-300', 'text-green-800');
+            }
+            
+            buzzerStatusEl.textContent = buzzerStatus;
+            buzzerStatusEl.classList.remove('bg-red-400', 'bg-gray-300', 'text-red-900', 'text-gray-800', 'animate-pulse');
+            if (buzzerStatus === 'ON (ALARM)') {
+                // Animated red for alarm state
+                buzzerStatusEl.classList.add('bg-red-400', 'text-red-900', 'font-bold', 'animate-pulse');
+            } else {
+                buzzerStatusEl.classList.add('bg-gray-300', 'text-gray-800');
+            }
+
+            ultrasonicValueEl.textContent = `${ultrasonicCM} cm`;
+
+            // 4. Heatmap Update
+            updateHeatmap(emissionLevel);
+        }
+
+        function updateHeatmap(globalLevel) {
+            heatmapGridEl.innerHTML = ''; // Clear existing grid
+            
+            const zones = [
+                'Zone 1: Boiler Stack', 'Zone 2: Vent A', 'Zone 3: Main Exhaust',
+                'Zone 4: Vent B', 'Zone 5: Storage Tank', 'Zone 6: Cooling Tower'
+            ];
+
+            zones.forEach((zone, index) => {
+                // Determine a local zone level (slight variance from global level)
+                let zoneLevel = globalLevel;
+                if (index % 3 === 0) zoneLevel = Math.max(0, globalLevel - 1); // Zone 1, 4 tend to be lower
+                if (index % 3 === 2) zoneLevel = Math.min(2, globalLevel + 1); // Zone 3, 6 tend to be higher
+                
+                let colorClass, statusText;
+
+                switch(zoneLevel) {
+                    case 0:
+                        colorClass = 'bg-green-500 hover:bg-green-600';
+                        statusText = 'CLEAR';
+                        break;
+                    case 1:
+                        colorClass = 'bg-yellow-500 hover:bg-yellow-600';
+                        statusText = 'HIGH RISK';
+                        break;
+                    case 2:
+                        colorClass = 'bg-red-600 hover:bg-red-700 animate-pulse';
+                        statusText = 'CRITICAL ALERT';
+                        break;
+                    default:
+                        colorClass = 'bg-gray-400';
+                        statusText = 'UNKNOWN';
+                }
+
+                const zoneElement = `
+                    <div class="p-3 rounded-lg text-white font-semibold shadow-lg ${colorClass} transition duration-150 transform hover:scale-[1.02]">
+                        <p class="text-xs opacity-80">${zone}</p>
+                        <p class="text-lg">${statusText}</p>
+                    </div>
+                `;
+                heatmapGridEl.innerHTML += zoneElement;
+            });
+        }
+
+        // --- Azure Communication Placeholder ---
+
+        async function sendDataToAzure(data) {
+            // Placeholder for sending data to Azure IoT Hub or a Web App API endpoint
+            const azureEndpoint = 'https://your-azure-iot-hub.azure-devices.net/api/v1/telemetry'; // Replace with actual URL
+
+            const payload = {
+                device: 'RaspberryPi-CarbonVision-001',
+                ...data
+            };
+
+            // This is where your actual RPi Python/Node code would make an HTTP request
+            // or use the Azure IoT SDK to send MQTT/AMQP messages.
+            
+            // Simulating an API call delay and success/failure
+            await new Promise(resolve => setTimeout(resolve, Math.random() * 500 + 50));
+            
+            let logMessage;
+            if (Math.random() < 0.95) { // 95% success rate
+                logMessage = `<span class="text-blue-600">SUCCESS:</span> Sent ${data.mq2PPM} PPM to Azure at ${new Date().toLocaleTimeString()}`;
+            } else {
+                logMessage = `<span class="text-red-600">FAILURE:</span> Network error during sync at ${new Date().toLocaleTimeString()}`;
+            }
+            
+            logOutputEl.innerHTML = `<p>${logMessage}</p>` + logOutputEl.innerHTML;
+        }
+
+        // --- Main Loop ---
+
+        function mainLoop() {
+            // 1. Generate new simulated data
+            const sensorData = generateSensorData();
+            
+            // 2. Update the local RPi Dashboard UI
+            updateDashboard(sensorData);
+            
+            // 3. Send data to the simulated Azure endpoint
+            sendDataToAzure(sensorData).catch(e => console.error("Azure simulation failed:", e));
+        }
+
+        // Start the simulation loop
+        window.onload = function() {
+            mainLoop(); // Run once immediately
+            // Set the interval to run every 2 seconds, simulating a data stream
+            setInterval(mainLoop, 2000); 
+            updateHeatmap(0); // Initialize heatmap
+        };
+    </script>
+</body>
+</html>
